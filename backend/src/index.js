@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 import express from "express"
+import {clerkMiddleware} from "@clerk/express"
 import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -13,6 +14,8 @@ const PORT = process.env.PORT || 9000
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+
+app.use(clerkMiddleware());
 app.use(helmet())
 app.use(express.json( {limit: "10mb"}));
 app.use(express.urlencoded({ limit: "10mb", extended: false }));;
