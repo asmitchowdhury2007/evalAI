@@ -1,5 +1,5 @@
 import {Router} from "express"
-import {onboard,me} from "../controllers/authController.js"
+import {me} from "../controllers/authController.js"
 import {authenticate} from "../middleware/auth.middleware.js"
 
 
