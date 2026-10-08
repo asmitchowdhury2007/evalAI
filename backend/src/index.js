@@ -8,6 +8,8 @@ import cookieParser from "cookie-parser";
 import {fileURLToPath} from "url"
 import helmet from "helmet";
 import apiRouter from "./routes/index.js"
+import { env } from "./config/env.js";
+import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 const PORT = process.env.PORT || 9000
 
@@ -20,8 +22,10 @@ app.use(helmet())
 app.use(express.json( {limit: "10mb"}));
 app.use(express.urlencoded({ limit: "10mb", extended: false }));;
 app.use(cookieParser());
-app.use(cors({origin: process.env.CLIENT_URL,credentials: true,}));
+app.use(cors({origin: process.env.CORS_ORIGIN,credentials: true,}));
 
 app.use("/api", apiRouter);
+app.use(notFound);      
+app.use(errorHandler)
 
 app.listen(PORT, ()=> console.log("Server running ...."))
