@@ -15,3 +15,4 @@ export const validate = (schema) => (req, _res, next) => {
 
   next();
 };
+*/
