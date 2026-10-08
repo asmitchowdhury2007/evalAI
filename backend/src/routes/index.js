@@ -4,7 +4,7 @@ import authRouter from "./auth.route.js";
 const apiRouter = Router();
 
 apiRouter.use('/auth', authRouter);
-apiRouter.use('/messages', messageRouter);
+//apiRouter.use('/messages', messageRouter);
 
 
 export default apiRouter

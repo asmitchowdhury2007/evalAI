@@ -10,6 +10,7 @@ import { env } from "./config/env.js";
 import { notFound, errorHandler } from "./middleware/errorHandler.js";
 
 const PORT = env.PORT || 9000
+const app = express();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
