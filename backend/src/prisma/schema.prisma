@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UploadStatus {
+  PENDING
+  PROCESSING
+  DONE
+  FAILED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum Risk {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+model User {
+  id            String         @id @default(cuid())
+  clerkId       String         @unique
+  email         String?        @unique
+  name          String
+  createdAt     DateTime       @default(now())
+  students      Student[]
+  uploads       Upload[]
+  conversations Conversation[]
+}
+
+model Student {
+  id        String     @id @default(cuid())
+  teacherId String
+  teacher   User       @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  name      String
+  rollNo    String?
+  createdAt DateTime   @default(now())
+  feedbacks Feedback[]
+  analyses  Analysis[]
+
+  @@unique([teacherId, name])
+}
+
+model Upload {
+  id           String       @id @default(cuid())
+  teacherId    String
+  teacher      User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  fileName     String
+  filePath     String
+  status       UploadStatus @default(PENDING)
+  studentCount Int          @default(0)
+  createdAt    DateTime     @default(now())
+  feedbacks    Feedback[]
+  messages     Message[]
+}
+
+model Feedback {
+  id        String    @id @default(cuid())
+  uploadId  String
+  upload    Upload    @relation(fields: [uploadId], references: [id], onDelete: Cascade)
+  studentId String
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  text      String
+  createdAt DateTime  @default(now())
+  analysis  Analysis?
+}
+
+model Analysis {
+  id            String   @id @default(cuid())
+  feedbackId    String   @unique
+  feedback      Feedback @relation(fields: [feedbackId], references: [id], onDelete: Cascade)
+  studentId     String
+  student       Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  stress        Int
+  anxiety       Int
+  frustration   Int
+  disengagement Int
+  overload      Int
+  risk          Risk
+  summary       String?
+  createdAt     DateTime @default(now())
+}
+
+model Conversation {
+  id        String    @id @default(cuid())
+  teacherId String
+  teacher   User      @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  title     String    @default("New chat")
+  createdAt DateTime  @default(now())
+  messages  Message[]
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  role           MessageRole
+  content        String
+  uploadId       String?
+  upload         Upload?      @relation(fields: [uploadId], references: [id], onDelete: SetNull)
+  createdAt      DateTime     @default(now())
+}
