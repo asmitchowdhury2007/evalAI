@@ -54,8 +54,9 @@ model Upload {
   teacherId    String
   teacher      User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   fileName     String
-  filePath     String
+  rawText      String?      @db.Text
   status       UploadStatus @default(PENDING)
+  error        String?
   studentCount Int          @default(0)
   createdAt    DateTime     @default(now())
   feedbacks    Feedback[]
@@ -68,7 +69,7 @@ model Feedback {
   upload    Upload    @relation(fields: [uploadId], references: [id], onDelete: Cascade)
   studentId String
   student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  text      String
+  text      String    @db.Text
   createdAt DateTime  @default(now())
   analysis  Analysis?
 }
