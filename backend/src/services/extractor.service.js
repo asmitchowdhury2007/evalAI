@@ -30,8 +30,15 @@ ${text.slice(0, 12000)}`;
   }
 }
 
-export async function extractStudents(text) {
+async function extractRaw(text) {
   const records = parseTemplate(text);
   if (records.length > 0) return records;
   return env.USE_LLM === "true" ? parseWithLLM(text) : [];
+}
+export async function extractStudents(text) {
+  const raw = await extractRaw(text);
+  return raw.slice(0, 100).map((r) => ({
+    name: r.name.replace(/\s+/g, " ").trim().slice(0, 100),
+    feedback: r.feedback.trim().slice(0, 5000),
+  })).filter((r) => r.name && r.feedback);
 }

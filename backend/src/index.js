@@ -11,7 +11,7 @@ import { notFound, errorHandler } from "./middleware/errorHandler.js";
 import { serve } from "inngest/express";
 import { inngest } from "./inngest/client.js";
 import { processUpload } from "./inngest/functions/processUpload.js";
-
+import { globalLimiter } from "./middleware/rateLimit.js";
 
 const PORT = env.PORT || 9000
 const app = express();
@@ -19,16 +19,22 @@ const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-app.use(clerkMiddleware());
+app.set("trust proxy", 1);
 app.use(helmet())
 app.use(express.json( {limit: "4mb"}));
 app.use(express.urlencoded({ limit: "10mb", extended: false }));;
 app.use(cookieParser());
 app.use(cors({origin: env.CORS_ORIGIN,credentials: true,}));
 
-app.use("/api/inngest", serve({ client: inngest, functions: [processUpload] }));
-app.use("/api", apiRouter);
+app.use(express.json({ limit: "1mb" }));
+app.use(
+  clerkMiddleware(
+    env.NODE_ENV === "production" ? { authorizedParties: [env.CORS_ORIGIN] } : {}
+  )
+);
+
+app.use("/api/inngest", express.json({ limit: "4mb" }), serve({ client: inngest, functions: [processUpload] }));
+app.use("/api",globalLimiter, apiRouter);
 app.use(notFound);      
 app.use(errorHandler)
 

@@ -9,6 +9,7 @@ import {
   conversationIdSchema,
   sendMessageSchema,
 } from "../validators/chat.validator.js";
+import { chatLimiter, uploadLimiter } from "../middleware/rateLimit.js";
 
 const chatRouter = Router();
 
@@ -21,9 +22,9 @@ chatRouter.get("/conversations", chatController.listConversations);
 
 
 chatRouter.get("/conversations/:id/messages", validate(conversationIdSchema), chatController.getMessages);
-chatRouter.post("/conversations/:id/messages", validate(sendMessageSchema), chatController.sendMessage);
+chatRouter.post("/conversations/:id/messages",chatLimiter, validate(sendMessageSchema), chatController.sendMessage);
 
 
-chatRouter.post("/conversations/:id/upload", uploadPdf, uploadController.createUpload);
+chatRouter.post("/conversations/:id/upload",uploadLimiter, uploadPdf, uploadController.createUpload);
 
 export default chatRouter;
