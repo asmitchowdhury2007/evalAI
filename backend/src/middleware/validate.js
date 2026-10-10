@@ -1,4 +1,4 @@
-/*
+
 export const validate = (schema) => (req, _res, next) => {
   const parsed = schema.parse({
     body: req.body,
@@ -15,4 +15,3 @@ export const validate = (schema) => (req, _res, next) => {
 
   next();
 };
-*/
