@@ -7,10 +7,11 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive().default(9000),
     CORS_ORIGIN: z.string().default("http://localhost:5173"),
     DATABASE_URL: z.string().min(1),
-  // REDIS_URL: z.string().default("redis://localhost:6379"),
-
-  CLERK_PUBLISHABLE_KEY: z.string().min(1),
-  CLERK_SECRET_KEY: z.string().min(1),
+    CLERK_PUBLISHABLE_KEY: z.string().min(1),
+    CLERK_SECRET_KEY: z.string().min(1),
+    OLLAMA_URL: z.string().default("http://localhost:11434"),
+    LLM_MODEL: z.string().default("llama3.2:3b"),
+    USE_LLM: z.enum(["true", "false"]).default("false"),
 });
 
 const result = envSchema.safeParse(process.env);
