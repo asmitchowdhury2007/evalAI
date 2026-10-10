@@ -3,7 +3,7 @@ import { prisma } from "../config/database.js";
 
 const healthRouter = Router();
 
-healthRouter.get("/", (_req, res) => {
+healthRouter.get("/", (req, res) => {
   res.json({ success: true, data: { status: "ok" } });
 });
 

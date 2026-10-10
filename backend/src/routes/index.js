@@ -4,6 +4,7 @@ import uploadRouter from "./upload.routes.js";
 import studentRouter from "./student.routes.js";
 import dashboardRouter from "./dashboard.routes.js";
 import healthRouter from "./health.route.js";
+import chatRoutes from "./chat.routes.js"
 
 const apiRouter = Router();
 
