@@ -11,10 +11,21 @@ export async function createUpload(teacherId, conversationId, file) {
   });
   if (!conversation) throw new ApiError(404, "Conversation not found", "NOT_FOUND");
 
-  const parsed = await pdf(file.buffer);
-  const text = parsed.text.trim();
+  if (file.buffer.subarray(0, 5).toString() !== "%PDF-") {
+    throw new ApiError(400, "That file is not a valid PDF", "INVALID_FILE");
+  }
+
+  let text;
+  try {
+    text = (await pdf(file.buffer)).text.trim();
+  } catch {
+    throw new ApiError(422, "Could not read this PDF", "UNREADABLE_PDF");
+  }
   if (text.length < 20) {
     throw new ApiError(422, "No readable text found. Scanned PDFs are not supported yet.", "EMPTY_PDF");
+  }
+  if (text.length > 200_000) {
+    throw new ApiError(413, "PDF has too much text (max about 200,000 characters)", "TOO_LARGE");
   }
 
   const upload = await prisma.upload.create({
