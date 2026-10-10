@@ -12,6 +12,8 @@ const envSchema = z.object({
     OLLAMA_URL: z.string().default("http://localhost:11434"),
     LLM_MODEL: z.string().default("llama3.2:3b"),
     USE_LLM: z.enum(["true", "false"]).default("false"),
+    OLLAMA_API_KEY: z.string().optional(),
+    LLM_TIMEOUT_MS: z.coerce.number().default(90000),
 });
 
 const result = envSchema.safeParse(process.env);

@@ -20,7 +20,7 @@ Return JSON only: {"students":[{"name":"...","feedback":"..."}]}
 Text:
 ${text.slice(0, 12000)}`;
   try {
-    const raw = await askLLM(prompt, { json: true });
+    const raw = await askLLM(prompt, { json: true, maxTokens : 1500 });
     const list = JSON.parse(raw).students;
     return Array.isArray(list)
       ? list.filter((s) => s?.name && s?.feedback).map((s) => ({ name: String(s.name), feedback: String(s.feedback) }))

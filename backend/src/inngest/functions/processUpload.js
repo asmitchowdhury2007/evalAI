@@ -8,6 +8,7 @@ export const processUpload = inngest.createFunction(
   {
     id: "process-upload",
     retries: 2,
+    concurrency: { limit: 1 },
     onFailure: async ({ event, error }) => {
       const uploadId = event.data.event.data.uploadId;
       await prisma.upload.update({
