@@ -35,7 +35,12 @@ export function errorHandler(err, _req, res, _next) {
       });
     }
   }
-
+  if (err.code === "LIMIT_FILE_SIZE") {
+    return res.status(413).json({
+      success: false,
+      error: { message: "File too large (max 5 MB)", code: "FILE_TOO_LARGE" },
+    });
+  }
  
   const status = err.statusCode || 500;
   if (status === 500) console.error(err);
